@@ -16,23 +16,11 @@ import scala.io.Source.fromInputStream
 object InverseCaptcha {
   private val inputFn = "/inverse-captcha-input.dat"
 
-  private def addOnEq(digits: Array[Int]): Int = {
+  private def addOnEq(digits: Array[Int], part2: Boolean = false): Int = {
     val len = digits.length
+    val stepLen = if (part2) len / 2 else 1
     digits.zipWithIndex.foldLeft(0) { case (acc, (d, i)) =>
-      val ii = if (i + 1 >= len) 0 else i + 1
-      if (d == digits(ii)) acc + d
-      else acc
-    }
-  }
-
-  private def addOnEq2(digits: Array[Int]): Int = {
-    val len = digits.length
-    val steps = len / 2
-    digits.zipWithIndex.foldLeft(0) { case (acc, (d, i)) =>
-      val ii = if (i + steps >= len) {
-        val n = i + steps
-        n - len
-      } else i + steps
+      val ii = if (i + stepLen >= len) i + stepLen - len else i + stepLen
       if (d == digits(ii)) acc + d
       else acc
     }
@@ -50,15 +38,15 @@ object InverseCaptcha {
   }
 
   private def part2(): Unit = {
-    assert(addOnEq2(Array(1, 2, 1, 2)) == 6)
-    assert(addOnEq2(Array(1, 2, 2, 1)) == 0)
-    assert(addOnEq2(Array(1, 2, 3, 4, 2, 5)) == 4)
-    assert(addOnEq2(Array(1, 2, 3, 1, 2, 3)) == 12)
-    assert(addOnEq2(Array(1, 2, 1, 3, 1, 4, 1, 5)) == 4)
+    assert(addOnEq(Array(1, 2, 1, 2), part2 = true) == 6)
+    assert(addOnEq(Array(1, 2, 2, 1), part2 = true) == 0)
+    assert(addOnEq(Array(1, 2, 3, 4, 2, 5), part2 = true) == 4)
+    assert(addOnEq(Array(1, 2, 3, 1, 2, 3), part2 = true) == 12)
+    assert(addOnEq(Array(1, 2, 1, 3, 1, 4, 1, 5), part2 = true) == 4)
 
     val stream = getClass.getResourceAsStream(inputFn)
     val digits = fromInputStream(stream).map(_.asDigit).toArray
-    println(addOnEq2(digits))
+    println(addOnEq(digits, part2 = true))
   }
 
   def main(args: Array[String]): Unit = {
