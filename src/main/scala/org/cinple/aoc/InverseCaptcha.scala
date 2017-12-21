@@ -18,7 +18,6 @@ object InverseCaptcha {
   private def addOnEq(digits: Array[Int]): Int = {
     val len = digits.length
     digits.zipWithIndex.foldLeft(0) { case (acc, (d, i)) =>
-      println(d, i, acc)
       val ii = if (i + 1 >= len) 0 else i + 1
       if (d == digits(ii)) acc + d
       else acc
