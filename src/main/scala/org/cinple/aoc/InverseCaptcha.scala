@@ -15,9 +15,10 @@ import scala.io.Source.fromInputStream
 object InverseCaptcha {
   private val inputFn = "/inverse-captcha-input.dat"
 
-  def addOnEq(digits: Array[Int]): Int = {
+  private def addOnEq(digits: Array[Int]): Int = {
     val len = digits.length
     digits.zipWithIndex.foldLeft(0) { case (acc, (d, i)) =>
+      println(d, i, acc)
       val ii = if (i + 1 >= len) 0 else i + 1
       if (d == digits(ii)) acc + d
       else acc
@@ -25,13 +26,13 @@ object InverseCaptcha {
   }
 
   def main(args: Array[String]): Unit = {
-    println(addOnEq(Array(1, 1, 2, 2)))
-    println(addOnEq(Array(1, 1, 1, 1)))
-    println(addOnEq(Array(1, 2, 3, 4)))
-    println(addOnEq(Array(9, 1, 2, 1, 2, 1, 2, 9)))
+    assert(addOnEq(Array(1, 1, 2, 2)) == 3)
+    assert(addOnEq(Array(1, 1, 1, 1)) == 4)
+    assert(addOnEq(Array(1, 2, 3, 4)) == 0)
+    assert(addOnEq(Array(9, 1, 2, 1, 2, 1, 2, 9)) == 9)
 
     val stream = getClass.getResourceAsStream(inputFn)
-    val digits = fromInputStream(stream).map(_.toInt).toArray
+    val digits = fromInputStream(stream).map(_.asDigit).toArray
     println(addOnEq(digits))
   }
 }
